@@ -2,9 +2,10 @@ plugins {
     java
     kotlin("jvm") version "1.4.21"
     `java-library`
+    maven
 }
 
-group = "org.clubcode"
+group = "com.github.club-code"
 version = "1.0-SNAPSHOT"
 
 repositories {
