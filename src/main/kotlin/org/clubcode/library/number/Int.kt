@@ -29,3 +29,44 @@ fun euclid(a: Int, b: Int): Euclid =
     }
 
 data class Euclid(val gcd: Int, val u: Int, val v: Int)
+
+/*
+
+
+LONG
+
+
+
+ */
+
+
+fun Long.pow(pow: Long): Long =
+    when {
+        pow == 0L -> 1L
+        pow == 1L -> this
+        pow and 1 == 0L -> (this * this).pow(pow / 2)
+        else -> this * ((this * this).pow(pow / 2))
+    }
+
+
+tailrec fun gcd(a: Long, b: Long): Long =
+    if (b == 0L)
+        a
+    else
+        gcd(b, a%b)
+
+
+fun lcm(a: Long, b: Long): Long = kotlin.math.abs(a * b)/gcd(a, b)
+
+/**
+ * @return (d, u, v) where d is the gcd of a and b, u and v two integers with au + bv = d
+ */
+fun euclid(a: Long, b: Long): EuclidLong =
+    if (b == 0L)
+        EuclidLong(a, 1, 0)
+    else {
+        val r = euclid(b, a % b)
+        EuclidLong(r.gcd, r.v, r.u - (a/b)*r.v)
+    }
+
+data class EuclidLong(val gcd: Long, val u: Long, val v: Long)
