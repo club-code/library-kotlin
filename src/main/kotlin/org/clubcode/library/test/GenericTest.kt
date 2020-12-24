@@ -8,6 +8,11 @@ import java.io.InputStream
 import java.io.PrintStream
 import kotlin.reflect.KFunction
 
+
+interface FastTests
+interface NotWorkingTests
+interface SlowTests
+
 open class GenericTest {
 
     lateinit var oldInput: InputStream
