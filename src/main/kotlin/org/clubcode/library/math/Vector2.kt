@@ -24,6 +24,8 @@ data class Vector2(val x: Double, val y: Double){
 
     fun dot(v: Vector2): Double = x*v.x+y*v.y
 
+    fun crossNorm(v: Vector2) = x*v.y-y*v.x
+
     val angle: Double by lazy {
         acos(x/norm)
     }

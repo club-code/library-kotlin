@@ -31,6 +31,8 @@ data class IntVector2(val x: Int, val y: Int){
 
     fun dot(v: IntVector2): Int = x*v.x+y*v.y
 
+    fun crossNorm(v: IntVector2) = x*v.y-y*v.x
+
     val angle: Double by lazy {
         acos(x/norm)
     }
