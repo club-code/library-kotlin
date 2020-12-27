@@ -29,9 +29,9 @@ class TestGraph {
     @Test
     fun removeGraph() {
         graph.removeNode(2)
-        assertEquals(1, graph[0].getNeighbors().size)
-        assertTrue(graph[1].getNeighbors().isEmpty())
-        assertTrue(graph[3].getNeighbors().isEmpty())
+        assertEquals(1, graph[0].getSuccessors().size)
+        assertTrue(graph[1].getSuccessors().isEmpty())
+        assertTrue(graph[3].getSuccessors().isEmpty())
         assertEquals(false, graph.contains(2))
     }
 
@@ -50,11 +50,36 @@ class TestGraph {
     }
 
     @Test
-    fun getNeighbors() {
-        val neighbors = graph[0].getNeighbors()
+    fun testGetSuccessors() {
+        val neighbors = graph.getSuccessors(0)
         assertEquals(2, neighbors.size)
         val s = neighbors.map { it.element }.toSet()
         assertTrue(1 in s)
         assertTrue(2 in s)
+    }
+
+    @Test
+    fun testGetPredecessors() {
+        val neighbors = graph.getPredecessors(2)
+        assertEquals(3, neighbors.size)
+        val s = neighbors.map { it.element }.toSet()
+        assertTrue(0 in s)
+        assertTrue(1 in s)
+        assertTrue(3 in s)
+    }
+
+    @Test
+    fun testGetAdjacents() {
+        val neighbors = graph.getAdjacents(2)
+        assertEquals(3, neighbors.size)
+        val s = neighbors.map { it.element }.toSet()
+        assertTrue(0 in s)
+        assertTrue(1 in s)
+        assertTrue(3 in s)
+    }
+
+    @Test
+    fun testDijsktra() {
+        println(graph.dijkstra(0, 3))
     }
 }
