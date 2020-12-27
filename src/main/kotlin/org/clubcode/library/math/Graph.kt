@@ -1,142 +1,100 @@
 package org.clubcode.library.math
 
-import java.util.*
-import kotlin.NoSuchElementException
-
-class WeightedDirectedGraph<T> {
-    private val l: MutableMap<T, MutableSet<Edge>> = mutableMapOf()
-
-    fun addNode(el: T) {
-        val set = l.getOrDefault(el, mutableSetOf())
-        l[el] = set
-    }
+interface Graph<T, K: Number> {
+    fun addNode(el: T)
 
     fun addNodes(c: Collection<T>) {
-        for (v in c)
-            addNode(v)
+        for (node in c) {
+            addNode(node)
+        }
     }
 
-    fun removeNode(el: T) {
-        val e = Edge(el, 0)
-        l.remove(el)
-        for (x in l)
-            x.value.remove(e)
-    }
+    fun removeNode(el: T)
 
     fun removeNodes(c: Collection<T>) {
         for (v in c)
             removeNode(v)
     }
 
-    fun addEdge(from: T, to: T, weight: Number) {
-        addNode(from)
-        addNode(to)
-        getEdges(from).add(Edge(to, weight))
-    }
+    fun addEdge(edge: WeightedEdge<T, K>)
 
-    fun addEdges(edges: Collection<Triple<T, T, Number>>) {
+    fun addEdges(edges: Collection<WeightedEdge<T, K>>) {
         for (edge in edges) {
-            addEdge(edge.first, edge.second, edge.third)
+            addEdge(edge)
         }
     }
 
-    fun removeEdge(from: T, to: T) {
-        val set = getEdges(from)
-        set.remove(Edge(to, 0))
-    }
+    fun removeEdge(edge: SimpleEdge<T>)
 
-    fun removeEdges(edges: Collection<Pair<T, T>>) {
+    fun removeEdges(edges: Collection<SimpleEdge<T>>) {
         for (edge in edges) {
-            removeEdge(edge.first, edge.second)
+            removeEdge(edge)
         }
     }
 
-    fun clear() {
-        l.clear()
+    fun getEdges(el: T): Set<WeightedEdge<T, K>>
+
+    fun getNodes() : Set<Node<T, K>>
+
+    fun getNeighbors(el: T) : Set<Node<T, K>>
+
+    operator fun contains(el: T): Boolean
+
+    fun clear()
+}
+
+interface Edge<T, K: Number> {
+    var weight: K
+    val from: T
+    val to: T
+
+    fun toSimpleEdge(): SimpleEdge<T> = SimpleEdge(from, to)
+}
+
+class SimpleEdge<T>(override val from: T, override val to: T): Edge<T, Int> {
+    fun reverse(): Edge<T, Int> {
+        return SimpleEdge(to, from)
     }
 
-    operator fun contains(el: T): Boolean = l[el] != null
+    override var weight = 1
 
-    operator fun contains(node: Node) = node.element in this
-
-    private fun getEdges(el: T): MutableSet<Edge> {
-        return l[el] ?: noSuchElement(el)
+    override fun toString(): String {
+        return "($from -> $to)"
     }
+}
 
-    fun getNode(): Set<Node> = l.keys.map { Node(it) }.toSet()
-
-    operator fun get(el: T) = Node(el ?: noSuchElement(el))
-
-    inner class Node(val element: T) {
-        fun getNeighbors(): Set<Node> {
-            return getEdges(element).map { Node(it.to) }.toSet()
-        }
-
-        fun getEdges(): Set<NodeEdge> = getEdges(element).map { it.toNodeEdge() }.toSet()
-
-        override fun toString(): String {
-            return "$element"
-        }
-    }
-
-    val revert: WeightedDirectedGraph<T>
-        get() {
-            val g = WeightedDirectedGraph<T>()
-            g.addEdges(l.map { it.value.map { v -> Triple(v.to, it.key, v.weight) } }.flatten())
-            return g
-        }
-
-
-    fun breadthFirstSearch(node: T, f: (T) -> Unit): Set<T> {
-        val queue = LinkedList<T>()
-        val marked = mutableSetOf<T>()
-
-        queue.add(node)
-        marked.add(node)
-        while (queue.isNotEmpty()) {
-            val s = queue.remove()
-            f(s)
-            for (neighbor in getEdges(s).map { it.to }) {
-                if (neighbor !in marked) {
-                    queue.add(neighbor)
-                    marked.add(neighbor)
-                }
-            }
-        }
-        return marked
-    }
-
-    private fun noSuchElement(el: T): Nothing = throw NoSuchElementException("$el is not a vertex of the graph")
-
-    private inner class Edge(val to: T, var weight: Number) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is WeightedDirectedGraph<*>.Edge) return false
-
-            if (to != other.to) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return to.hashCode()
-        }
-
-        fun toNodeEdge(): NodeEdge = NodeEdge(Node(this.to), weight)
-
-        override fun toString(): String {
-            return "($to, $weight)"
-        }
-    }
-
-    inner class NodeEdge(val to: Node, var weight: Number) {
-        override fun toString(): String {
-            return "($to, $weight)"
-        }
+class WeightedEdge<T, K: Number>(override val from: T, override val to: T, override var weight: K) : Edge<T, K> {
+    fun reverse(): Edge<T, K> {
+        return WeightedEdge(to, from, weight)
     }
 
     override fun toString(): String {
-        return l.map { "  ${it.key} -> ${it.value}" }.joinToString("\n", "Graph:\n")
+        return "($from -> $to, $weight)"
+    }
+}
+
+class Node<T, K: Number>(val element: T, private val graph: Graph<T, K>) {
+    fun getNeighbors(): Set<Node<T, K>> = graph.getNeighbors(element)
+
+    fun getEdges(): Set<WeightedEdge<T, K>> = graph.getEdges(element)
+
+    fun exists() = graph.contains(element)
+
+    override fun toString(): String {
+        return "$element"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Node<*,*>) return false
+
+        if (element != other.element) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return element.hashCode()
     }
 }
 
