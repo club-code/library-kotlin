@@ -1,8 +1,5 @@
 package org.clubcode.library.collection
 
-import org.clubcode.library.math.Node
-import org.clubcode.library.math.WeightedDirectedGraph
-
 fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
         throw ArithmeticException("Index overflow has happened.")

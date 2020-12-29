@@ -1,23 +1,27 @@
 package org.clubcode.library.math
 
+import org.clubcode.library.graph.ValueEdge
+import org.clubcode.library.graph.DirectedWeightedGraph
+import org.clubcode.library.graph.breadthFirstSearch
+import org.clubcode.library.graph.dijkstra
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class TestGraph {
-    val graph: WeightedDirectedGraph<Int, Int> = WeightedDirectedGraph()
+    val graph: DirectedWeightedGraph<Int, Int> = DirectedWeightedGraph()
 
     @Before
     fun init() {
         graph.clear()
         graph.addEdges(listOf(
-            WeightedEdge(0, 1, 10),
-            WeightedEdge(0, 2, 1),
-            WeightedEdge(1, 2, 5),
-            WeightedEdge(2,3, 2),
-            WeightedEdge(3,2, 4),
-            WeightedEdge(4,5, -1),
+            ValueEdge(0, 1, 10),
+            ValueEdge(0, 2, 1),
+            ValueEdge(1, 2, 5),
+            ValueEdge(2,3, 2),
+            ValueEdge(3,2, 4),
+            ValueEdge(4,5, -1),
         ))
     }
 
@@ -29,9 +33,9 @@ class TestGraph {
     @Test
     fun removeGraph() {
         graph.removeNode(2)
-        assertEquals(1, graph[0].getSuccessors().size)
-        assertTrue(graph[1].getSuccessors().isEmpty())
-        assertTrue(graph[3].getSuccessors().isEmpty())
+        assertEquals(1, graph.getSuccessors(0).size)
+        assertTrue(graph.getSuccessors(1).isEmpty())
+        assertTrue(graph.getSuccessors(3).isEmpty())
         assertEquals(false, graph.contains(2))
     }
 
@@ -46,36 +50,33 @@ class TestGraph {
     @Test
     fun getNode() {
         val node = graph[0]
-        assertEquals(0, node.element)
+        assertEquals(0, node)
     }
 
     @Test
     fun testGetSuccessors() {
         val neighbors = graph.getSuccessors(0)
         assertEquals(2, neighbors.size)
-        val s = neighbors.map { it.element }.toSet()
-        assertTrue(1 in s)
-        assertTrue(2 in s)
+        assertTrue(1 in neighbors)
+        assertTrue(2 in neighbors)
     }
 
     @Test
     fun testGetPredecessors() {
         val neighbors = graph.getPredecessors(2)
         assertEquals(3, neighbors.size)
-        val s = neighbors.map { it.element }.toSet()
-        assertTrue(0 in s)
-        assertTrue(1 in s)
-        assertTrue(3 in s)
+        assertTrue(0 in neighbors)
+        assertTrue(1 in neighbors)
+        assertTrue(3 in neighbors)
     }
 
     @Test
     fun testGetAdjacents() {
         val neighbors = graph.getAdjacents(2)
         assertEquals(3, neighbors.size)
-        val s = neighbors.map { it.element }.toSet()
-        assertTrue(0 in s)
-        assertTrue(1 in s)
-        assertTrue(3 in s)
+        assertTrue(0 in neighbors)
+        assertTrue(1 in neighbors)
+        assertTrue(3 in neighbors)
     }
 
     @Test
