@@ -1,4 +1,4 @@
-package org.clubcode.library.math
+package org.clubcode.library.graph
 
 import org.clubcode.library.graph.ValueEdge
 import org.clubcode.library.graph.DirectedWeightedGraph

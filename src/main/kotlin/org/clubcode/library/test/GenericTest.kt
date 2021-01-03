@@ -13,6 +13,8 @@ interface FastTests
 interface NotWorkingTests
 interface SlowTests
 
+const val BUFFER_SIZE = 1024 * 1024
+
 open class GenericTest {
 
     lateinit var oldInput: InputStream
@@ -32,7 +34,7 @@ open class GenericTest {
     fun genericTestString(input: String, output: String, method: KFunction<Unit>) {
         val inp = input.byteInputStream()
 
-        val o = ByteArrayOutputStream(1024 * 1024)
+        val o = ByteArrayOutputStream()
 
         System.setIn(inp)
         System.setOut(PrintStream(o))
@@ -50,7 +52,7 @@ open class GenericTest {
         val inp = GenericTest::class.java.getResourceAsStream(input)
         val answer = GenericTest::class.java.getResource(output)
 
-        val o = ByteArrayOutputStream(1024 * 1024)
+        val o = ByteArrayOutputStream(BUFFER_SIZE)
 
         System.setIn(inp)
         System.setOut(PrintStream(o))
@@ -67,7 +69,20 @@ open class GenericTest {
     fun genericTry(input: String, method: KFunction<Unit>) {
         val inp = GenericTest::class.java.getResourceAsStream(input)
 
-        val o = ByteArrayOutputStream(1024 * 1024)
+        val o = ByteArrayOutputStream(BUFFER_SIZE)
+
+        System.setIn(inp)
+
+        method.call()
+
+        setOldInput()
+
+        o.close()
+    }
+
+    fun genericTryString(input: String, method: KFunction<Unit>) {
+        val inp = input.byteInputStream()
+        val o = ByteArrayOutputStream(BUFFER_SIZE)
 
         System.setIn(inp)
 
