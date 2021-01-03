@@ -1,4 +1,4 @@
-package org.clubcode.library.math.vector
+package org.clubcode.library.vector
 
 import kotlin.math.*
 

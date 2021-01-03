@@ -1,6 +1,6 @@
-package org.clubcode.library.math.polynomial
+package org.clubcode.library.polynomial
 
-import org.clubcode.library.math.vector.Vector2
+import org.clubcode.library.vector.Vector2
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

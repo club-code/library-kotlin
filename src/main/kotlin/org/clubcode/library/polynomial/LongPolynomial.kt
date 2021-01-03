@@ -1,4 +1,4 @@
-package org.clubcode.library.math.polynomial
+package org.clubcode.library.polynomial
 
 import kotlin.math.max
 
